@@ -18,9 +18,9 @@ const String invalidInputFailureMessage =
     "Invalid input- Please input only positive integer";
 
 class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
-  final GetConcreteNumberTrivia? getConcreteNumberTrivia;
-  final GetRandomNumberTrivia? getRandomNumberTrivia;
-  final InputConverter? inputConverter;
+  final GetConcreteNumberTrivia getConcreteNumberTrivia;
+  final GetRandomNumberTrivia getRandomNumberTrivia;
+  final InputConverter inputConverter;
 
   NumberTriviaBloc({
     required this.getConcreteNumberTrivia,
@@ -36,7 +36,7 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
       GetTriviaForConcreteNumberEvent event,
       Emitter<NumberTriviaState> emit) async {
     final inputEither =
-        inputConverter!.stringToUnsignedInteger(event.numberString);
+        inputConverter.stringToUnsignedInteger(event.numberString);
 
     await inputEither.fold((failure) async {
       emit(
@@ -46,7 +46,7 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
       emit(Empty());
       emit(Loading());
       final failureOrTrivia =
-          await getConcreteNumberTrivia!(Params(number: integer));
+          await getConcreteNumberTrivia(Params(number: integer));
       await failureOrTrivia.fold(
         (failure) async {
           emit(Error(message: _mapFailureToMessage(failure)));
@@ -62,7 +62,7 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
       GetTriviaForRandomNumberEvent event,
       Emitter<NumberTriviaState> emit) async {
     emit(Loading());
-    final failureOrTrivia = await getRandomNumberTrivia!(NoParams());
+    final failureOrTrivia = await getRandomNumberTrivia(NoParams());
     failureOrTrivia.fold(
       (failure) async {
         emit(Error(message: _mapFailureToMessage(failure)));
